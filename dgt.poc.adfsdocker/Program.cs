@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.WsFederation;
 using Serilog;
 using Serilog.Events;
 using Serilog.Settings.Configuration;
@@ -12,10 +14,13 @@ namespace dgt.poc.adfsdocker
         {
             #region Raw test of the SEQ digest point
             Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
-
+            string seqUrl = "http://seq:5341";
+#if DEBUG
+            seqUrl = "http://localhost:5341";
+#endif
             try
             {
-                using var client = new HttpClient { BaseAddress = new Uri("http://seq:5341") };
+                using var client = new HttpClient { BaseAddress = new Uri(seqUrl) };
                 // client.DefaultRequestHeaders.Add("Content-Type", "application/vnd.serilog.clef");
 
                 var content = new StringContent(
@@ -52,7 +57,7 @@ namespace dgt.poc.adfsdocker
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
-                                .WriteTo.Seq("http://seq:5341", apiKey: "your-api-key")
+                                .WriteTo.Seq(seqUrl, apiKey: "your-api-key")
                                 .CreateLogger();
 
 
@@ -66,6 +71,7 @@ namespace dgt.poc.adfsdocker
                 // Add services to the container.
                 builder.Host.UseSerilog();
                 Log.Error("Starting up use");
+
 
                 builder.Services.AddControllers();
 
@@ -114,6 +120,7 @@ namespace dgt.poc.adfsdocker
                 app.UseCookiePolicy();
 
                 app.UseRouting();
+                app.UseAuthentication();
                 app.UseAuthorization();
 
 

@@ -4,11 +4,11 @@ services:
   api:
     image: myapi:latest
     build:
-      context: .
+      context: ./dgt.poc.adfsdocker
       dockerfile: Dockerfile
     ports:
       - "8442:80"
-      - "8443:443"
+      - "8441:443"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -22,6 +22,31 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.myapp.rule=Host(`myapi.dev.local`)"
       - "traefik.http.services.myservice.loadbalancer.server.port=8442"
+      - "traefik.http.routers.myapp.entrypoints=websecure"
+    networks:
+      - web
+      - log
+  web:
+    image: myweb:latest
+    build:
+      context: ./dgt.poc.webadfsdocker
+      dockerfile: Dockerfile
+    ports:
+      - "8444:80" # change this to whatever port you want to expose
+      - "8443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=DevForEver
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    depends_on:
+      - seq
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myapp.rule=Host(`myweb.dev.local`)" # change this to whatever hostname you want to use
+      - "traefik.http.services.myservice.loadbalancer.server.port=8444" # change this to match the port you exposed above
       - "traefik.http.routers.myapp.entrypoints=websecure"
     networks:
       - web
