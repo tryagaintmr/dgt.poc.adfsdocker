@@ -1,0 +1,66 @@
+﻿version: '3'
+
+services:
+  api:
+    image: myapi:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8442:80"
+      - "8443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=DevForEver
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    depends_on:
+      - seq
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myapp.rule=Host(`myapi.dev.local`)"
+      - "traefik.http.services.myservice.loadbalancer.server.port=8442"
+      - "traefik.http.routers.myapp.entrypoints=websecure"
+    networks:
+      - web
+      - log
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:80
+    networks:
+      - log
+
+  #traefik:
+  #  image: traefik:v2.10
+  #  command: 
+  #    - "--api.insecure=true"
+  #    - "--providers.docker=true"
+  #    - "--providers.docker.exposedbydefault=false"
+  #    - "--entrypoints.web.address=:80"
+  #    - "--providers.file.directory=/certs"
+  #    - "--providers.file.watch=true"
+  #    - "--api.dashboard=true"
+  #  ports:
+  #    - "8081:80"
+  #    - "8080:8080"
+  #  labels:
+  #    - "traefik.http.routers.traefik.rule=Host(`traefik.local`)"
+  #    - "traefik.http.routers.traefik.service=api@internal"
+  #    - "traefik.http.routers.traefik.entrypoints=web"
+  #  volumes:
+  #    - //var/run/docker.sock:/var/run/docker.sock
+  #    - C:\\Certs:/certs
+  #    - ./traefik.yml:/etc/traefik/traefik.yml
+  #  networks:
+  #    - web
+
+networks:
+  log:
+  web:
