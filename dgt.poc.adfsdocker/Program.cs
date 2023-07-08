@@ -10,7 +10,7 @@ namespace dgt.poc.adfsdocker
     {
         public static async Task Main(string[] args)
         {
-
+            #region Raw test of the SEQ digest point
             Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
 
             try
@@ -38,7 +38,7 @@ namespace dgt.poc.adfsdocker
             {
                 throw;
             }
-            
+            #endregion
 
             try
             {
@@ -54,26 +54,14 @@ namespace dgt.poc.adfsdocker
                                 .WriteTo.Console()
                                 .WriteTo.Seq("http://seq:5341", apiKey: "your-api-key")
                                 .CreateLogger();
-                Log.Verbose("This is a verbose log message");
-                Log.Debug("This is a debug log message");
-                Log.Information("This is an information log message");
-                Log.Warning("This is a warning log message");
-                Log.Error("This is an error log message");
-                Log.Fatal("This is a fatal log message");
 
-                Log.Error("Hello, {Name}!", Environment.UserName);
-                Log.Error("Starting up");
 
                 // Important to call at exit so that batched events are flushed.
-                //Log.CloseAndFlush();
                 builder.Services.AddSingleton<Serilog.ILogger>(sp => Log.Logger);
                 builder.Services.AddSingleton<Serilog.Extensions.Hosting.DiagnosticContext>();
 
                 var options = new ConfigurationReaderOptions { SectionName = "Seq" };
-                //builder.Services.AddLogging(loggingBuilder =>
-                //{
-                //    loggingBuilder.AddSeq();
-                //});
+
 
                 // Add services to the container.
                 builder.Host.UseSerilog();
