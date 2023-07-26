@@ -13,7 +13,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=DevForEver
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devdocker.pfx
     volumes:
       - ~/.aspnet/https:/https:ro
     depends_on:
@@ -34,11 +34,13 @@ services:
     ports:
       - "8444:80" # change this to whatever port you want to expose
       - "8443:443"
+    extra_hosts:
+      - "dc.dev.local:192.168.1.49"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=DevForEver
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devdocker.pfx
     volumes:
       - ~/.aspnet/https:/https:ro
     depends_on:

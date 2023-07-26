@@ -1,0 +1,40 @@
+# Web Application + Docker
+
+## Setup
+### Add a relying party-trust in AD FS
+
+
+### Add the Authentication/Authorization
+
+## ADFS Certificate 
+### Prepare the certificate
+- Copy the AD FS certificate at the root *adfs2019.dev.local.pfx* of the project in the folder of the *Dockerfile*
+
+### Convert the .pfx certificate into a .crt
+`openssl pkcs12 -in dc.dev.local.pfx -nokeys -out dc.dev.local.crt -nodes`
+
+### Copy the certicate in the container image and trust it
+
+In the *Dockerfile* add the current code : 
+    `# Install dependencies required to work with certificates
+    RUN apt-get update && apt-get install -y ca-certificates
+
+    # Add certificate to the image
+    COPY dc.dev.local.crt /usr/local/share/ca-certificates/dc.dev.local.crt
+    RUN update-ca-certificates`
+
+## Troubleshoot
+
+### Check if ADFS is reachable from a container
+
+### Check if the website is reachable from the ADFS Server
+
+### Check if the certificate is well installed in the image
+
+### Check if the certicate is trust in the image
+
+### Bypass certificate validation (DEBUGGING)
+
+### Check if the certificate is well converted in crt
+
+### Reload the docker-compose with rebuild

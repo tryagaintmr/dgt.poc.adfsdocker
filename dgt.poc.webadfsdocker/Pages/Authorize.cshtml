@@ -1,0 +1,11 @@
+﻿@page
+@model dgt.poc.webadfsdocker.Pages.AuthorizeModel
+@{
+}
+
+<p>Ceci est une page <b>sécurisée</b></p>
+<em>Bien joué! Voici les claims</em>
+@foreach (var claim in User.Claims)
+{
+    <p>@claim.Type: @claim.Value</p>
+}

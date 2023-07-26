@@ -14,9 +14,7 @@ namespace dgt.poc.webadfsdocker
             var builder = WebApplication.CreateBuilder(args);
             Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
             string seqUrl = "http://seq:5341";
-#if DEBUG
-            seqUrl = "http://localhost:5341";
-#endif
+
             ConfigurationManager configuration = builder.Configuration;
             Log.Logger = new LoggerConfiguration()
                                 .MinimumLevel.Debug()
@@ -38,10 +36,6 @@ namespace dgt.poc.webadfsdocker
             builder.Host.UseSerilog();
             var realm = configuration["wsfed:realm"];
 
-#if DEBUG
-            realm = "https://localhost:44334";
-#endif
-
             builder.Services.AddAuthentication(sharedOptions =>
             {
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -50,11 +44,12 @@ namespace dgt.poc.webadfsdocker
             {
                 options.Wtrealm = realm;
                 options.MetadataAddress = configuration["wsfed:metadata"];
+                //options.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
             }).AddCookie();
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-
+            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -69,7 +64,16 @@ namespace dgt.poc.webadfsdocker
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/signin-wsfed"))
+                {
+                    var form = await context.Request.ReadFormAsync();
+                    var token = form["wresult"];
+                    Console.WriteLine(token);
+                }
+                await next.Invoke();
+            });
             app.UseAuthentication();
             app.UseAuthorization();
 
