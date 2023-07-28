@@ -49,7 +49,6 @@ namespace dgt.poc.webadfsdocker
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

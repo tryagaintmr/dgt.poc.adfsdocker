@@ -5,7 +5,11 @@ VisualStudioVersion = 17.2.33502.348
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.poc.adfsdocker", "dgt.poc.adfsdocker\dgt.poc.adfsdocker.csproj", "{FB5BD927-0E32-4652-B235-F8A71765D9E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dgt.poc.webadfsdocker", "dgt.poc.webadfsdocker\dgt.poc.webadfsdocker.csproj", "{0DCFF7F4-695F-44BD-A2EA-E962FF93AB92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.poc.webadfsdocker", "dgt.poc.webadfsdocker\dgt.poc.webadfsdocker.csproj", "{0DCFF7F4-695F-44BD-A2EA-E962FF93AB92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dgt.poc.angadfsdocker", "dgt.poc.angadfsdocker\dgt.poc.angadfsdocker.csproj", "{F1017545-2500-4FBD-898B-F9968C0A2542}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dgt.poc.apipostgre", "dgt.poc.apipostgre\dgt.poc.apipostgre.csproj", "{B780AC45-575B-4B4D-8C3E-4F04B28D45DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{0DCFF7F4-695F-44BD-A2EA-E962FF93AB92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DCFF7F4-695F-44BD-A2EA-E962FF93AB92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DCFF7F4-695F-44BD-A2EA-E962FF93AB92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1017545-2500-4FBD-898B-F9968C0A2542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1017545-2500-4FBD-898B-F9968C0A2542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1017545-2500-4FBD-898B-F9968C0A2542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1017545-2500-4FBD-898B-F9968C0A2542}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B780AC45-575B-4B4D-8C3E-4F04B28D45DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B780AC45-575B-4B4D-8C3E-4F04B28D45DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B780AC45-575B-4B4D-8C3E-4F04B28D45DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B780AC45-575B-4B4D-8C3E-4F04B28D45DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
