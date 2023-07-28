@@ -20,8 +20,8 @@ services:
       - seq
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.myapp.rule=Host(`myapi.dev.local`)"
-      - "traefik.http.services.myservice.loadbalancer.server.port=8442"
+      - "traefik.http.routers.myapp.rule=Host(`hostweb.dev.local`)"
+      - "traefik.http.services.myservice.loadbalancer.server.port=8441"
       - "traefik.http.routers.myapp.entrypoints=websecure"
     networks:
       - web
@@ -47,12 +47,37 @@ services:
       - seq
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.myapp.rule=Host(`myweb.dev.local`)" # change this to whatever hostname you want to use
-      - "traefik.http.services.myservice.loadbalancer.server.port=8444" # change this to match the port you exposed above
+      - "traefik.http.routers.myapp.rule=Host(`hostweb.dev.local`)" # change this to whatever hostname you want to use
+      - "traefik.http.services.myservice.loadbalancer.server.port=8443" # change this to match the port you exposed above
       - "traefik.http.routers.myapp.entrypoints=websecure"
     networks:
       - web
       - log
+  api2:
+    image: dgt.poc.apipostgre
+    build:
+      context: ./dgt.poc.apipostgre
+      dockerfile: Dockerfile
+    ports:
+      - "8564:80" # change this to whatever port you want to expose
+      - "8563:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=DevForEver
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devdocker.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=your_password
+      - POSTGRES_USER=your_username
+      - POSTGRES_DB=your_database
   seq:
     image: datalust/seq:latest
     container_name: seq
@@ -63,30 +88,50 @@ services:
       - 5341:80
     networks:
       - log
-
-  #traefik:
-  #  image: traefik:v2.10
-  #  command: 
-  #    - "--api.insecure=true"
-  #    - "--providers.docker=true"
-  #    - "--providers.docker.exposedbydefault=false"
-  #    - "--entrypoints.web.address=:80"
-  #    - "--providers.file.directory=/certs"
-  #    - "--providers.file.watch=true"
-  #    - "--api.dashboard=true"
-  #  ports:
-  #    - "8081:80"
-  #    - "8080:8080"
-  #  labels:
-  #    - "traefik.http.routers.traefik.rule=Host(`traefik.local`)"
-  #    - "traefik.http.routers.traefik.service=api@internal"
-  #    - "traefik.http.routers.traefik.entrypoints=web"
-  #  volumes:
-  #    - //var/run/docker.sock:/var/run/docker.sock
-  #    - C:\\Certs:/certs
-  #    - ./traefik.yml:/etc/traefik/traefik.yml
-  #  networks:
-  #    - web
+  angular:
+    image: myangular:latest
+    build:
+      context: ./dgt.poc.angadfsdocker
+      dockerfile: Dockerfile
+    ports:
+      - "8445:80"
+      - "8446:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.angularapp.rule=Host(`angular.dev.local`)"
+      - "traefik.http.services.angularservice.loadbalancer.server.port=8445"
+      - "traefik.http.routers.angularapp.entrypoints=websecure"
+    networks:
+      - web
+      - log
+  traefik:
+   image: traefik:v2.10
+   command: 
+     - "--api.insecure=true"
+     - "--providers.docker=true"
+     - "--providers.docker.exposedbydefault=false"
+     - "--entrypoints.web.address=:80"
+     - "--providers.file.directory=/certs"
+     - "--providers.file.watch=true"
+     - "--api.dashboard=true"
+   ports:
+     - "8081:80"
+     - "8080:8080"
+   labels:
+     - "traefik.http.routers.traefik.rule=Host(`traefik.local`)"
+     - "traefik.http.routers.traefik.service=api@internal"
+     - "traefik.http.routers.traefik.entrypoints=web"
+   volumes:
+     - //var/run/docker.sock:/var/run/docker.sock
+     - C:\\Certs:/certs
+     - ./traefik.yml:/etc/traefik/traefik.yml
+   networks:
+     - web
 
 networks:
   log:
